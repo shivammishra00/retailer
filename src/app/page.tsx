@@ -1,95 +1,89 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+import Form from 'react-bootstrap/Form';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './page.module.css'
+import Link from 'next/link';
+import { FormEvent, useState } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+
+/////  here type define   /////
+interface LoginType {
+  email: string;
+  password: string;
+}
 
 export default function Home() {
+  
+  const [loginData, setloginData] = useState<LoginType>({
+    email: "shivank@gmail.com",
+    password: "12345678"
+  });
+  const [error, seterror] = useState<string | null>(null)
+
+  const router = useRouter()
+  
+  axios.defaults.withCredentials = true;
+  
+  const handleSubmit = async (e:FormEvent) =>{
+    e.preventDefault()
+    try{
+      await axios.post(`http://localhost:5000/api/retailer/login`, loginData)
+    .then(res =>{
+      console.log(res)
+      if(res.data.loginStatus){
+        toast.success(res.data.Message)
+        router.push(`/dashboard`)
+      }
+      else{
+        // toast.success(res.data.Error)
+        seterror(res.data.Error)
+      }
+    })
+    .catch(err => console.log(err))
+    } catch(err){
+       console.log(err)
+    }
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className='d-flex justify-content-center align-items-center vh-100 loginPage'>
+    <div className=' p-3 rounded w-25 border loginForm'>
+      
+        {/* <p> error ko show kara liya </p> */}
+        <div className='text-danger error'>
+            {error}
         </div>
-      </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+        <h3 className='text-center mt-3 loginHeading'>Retailer Login</h3>
+        <Form  className='mt-3' onSubmit={handleSubmit}>
+          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control type="email" placeholder="Enter your email" 
+            name='email' value={loginData.email}
+            onChange={(e)=>setloginData({...loginData, [e.target.name]: e.target.value})}
+            />
+          </Form.Group>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+          <Form.Group className="mb-3" controlId="formBasicPassword">
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="password" placeholder="Enter yourPassword" name='password'  value={loginData.password}
+            onChange={(e)=>setloginData({...loginData, [e.target.name]: e.target.value})}
+            />
+          </Form.Group>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
+          <button type='submit' className='btn btn-success w-100 rounded-0 mb-2'>Sign in</    button>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
+          <p 
+            className='text-center'>Not a member ? <Link href="/signup" className='text-decoration-none' >Signup hear</Link> 
           </p>
-        </a>
-      </div>
-    </main>
-  );
+          <p className='text-center mt-0'>Log in to access your account</p>
+        </Form>
+    </div>
+
+</div>
+  )
 }
+
+
