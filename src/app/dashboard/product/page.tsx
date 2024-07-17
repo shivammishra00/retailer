@@ -56,6 +56,7 @@ interface updateQuantityType {
 
 
 export default function Product() {
+  var a = 10;
   const [productList, setproductList] = useState<ProductListType[]>([])
   const [inputData, setinputData] = useState<ProductInputType>({
     pid: "P01",
