@@ -11,6 +11,8 @@ import { MdAddBox } from "react-icons/md";
 import { Modal, Button } from "react-bootstrap";
 import AddDiscription from './ProductDiscription/AddDiscription';
 import ViewDescription from "./ProductDiscription/ViewDescription";
+import AddImage from "./ProductImage/AddImage";
+import ViewImage from "./ProductImage/ViewImage";
 
 ////////======== data post for type define ===========////////////
 interface ProductInputType  {
@@ -424,8 +426,10 @@ export default function Product() {
                                         </span>
                                       </td>
                                       <td>
-                                        <span><MdAddBox className='text-primary' size={26}/></span>
-                                        <span><FaRegEye className="text-danger" size={26} /></span>
+                                        <span className="d-flex" style={{marginLeft:"15px"}}>
+                                          <AddImage pid={p.pid}/>
+                                          <ViewImage pid={p.pid}/>
+                                        </span>
                                       </td>
                                       <td>{moment(p.lastupdate).format('DD-MM-YYYY')}</td>
                                     </tr>
